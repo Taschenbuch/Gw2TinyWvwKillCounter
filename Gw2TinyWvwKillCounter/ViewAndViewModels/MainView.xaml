@@ -1,0 +1,139 @@
+﻿<Window x:Class="Gw2TinyWvwKillCounter.ViewAndViewModels.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:settings="clr-namespace:Gw2TinyWvwKillCounter.Properties"
+        xmlns:viewAndViewModels="clr-namespace:Gw2TinyWvwKillCounter.ViewAndViewModels"
+        xmlns:icon="clr-namespace:Gw2TinyWvwKillCounter.Icon"
+        xmlns:gw2TinyWvwKillCounter="clr-namespace:Gw2TinyWvwKillCounter"
+        mc:Ignorable="d"
+        Top="{Binding WindowTop, Source={x:Static settings:Settings.Default}, Mode=TwoWay}"
+        Left="{Binding WindowLeft, Source={x:Static settings:Settings.Default}, Mode=TwoWay}"
+        MouseDown="DragWindowWithLeftMouseButton"
+        Topmost="True"
+        WindowStyle="None" AllowsTransparency="True"
+        SizeToContent="WidthAndHeight"
+        Title="GW2 Tiny WvW Kill Counter"
+        d:DataContext="{d:DesignInstance Type=viewAndViewModels:MainViewModel, IsDesignTimeCreatable=true}">
+    <Window.Background>
+        <SolidColorBrush Color="Transparent"/>
+    </Window.Background>
+    <Window.Resources>
+        <gw2TinyWvwKillCounter:BoolToVisibilityHiddenIfFalseConverter x:Key="BoolToVisibilityHiddenIfFalseConverter"/>
+        <Style TargetType="ToolTip">
+            <!-- for scaling tooltips size -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToolTip}">
+                        <Border x:Name="Border"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="True">
+                            <Border.LayoutTransform>
+                                <ScaleTransform ScaleX="{Binding UiSettings.TooltipScaling}"
+                                                ScaleY="{Binding UiSettings.TooltipScaling}" />
+                            </Border.LayoutTransform>
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="MouseEnter">
+            <b:InvokeCommandAction Command="{Binding OnMouseEnterCommand}" />
+        </b:EventTrigger>
+        <b:EventTrigger EventName="MouseLeave">
+            <b:InvokeCommandAction Command="{Binding OnMouseLeaveCommand}" />
+        </b:EventTrigger>
+        <b:EventTrigger EventName="Loaded">
+            <b:InvokeCommandAction Command="{Binding OnWindowLoadedCommand}" />
+        </b:EventTrigger>
+        <b:EventTrigger EventName="Closing">
+            <b:InvokeCommandAction Command="{Binding OnWindowClosingCommand}" />
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
+    <Viewbox Stretch="Uniform" Height="{Binding UiSettings.MainWindowHeight}" Width="{Binding UiSettings.MainWindowWidth}">
+        <StackPanel Orientation="Vertical">
+            <!--Buttons-->
+            <StackPanel Orientation="Horizontal"
+                        Visibility="{Binding TitleBarButtonsAreVisible, Converter={StaticResource BoolToVisibilityHiddenIfFalseConverter}}">
+                <StackPanel.Background>
+                    <SolidColorBrush Color="Black" Opacity="{Binding UiSettings.Opacity, Mode=OneWay}"/>
+                </StackPanel.Background>
+                <Button Command="{Binding ResetKillsAndDeathsCommand}"
+                        IsEnabled="{Binding ResetButtonIsEnabled}"
+                        ToolTip="Reset session: 0 kills, 0 deaths"
+                        Background="Transparent"
+                        BorderThickness="0">
+                    <Viewbox Width="17" Height="17">
+                        <Canvas Width="24" Height="24">
+                            <Path Fill="LightGray" Data="{x:Static icon:Icons.Zero}" />
+                        </Canvas>
+                    </Viewbox>
+                </Button>
+                <Button Command="{Binding OpenSettingsCommand}"
+                        ToolTip="Open settings to enter API key"
+                        Background="Transparent"
+                        BorderThickness="0">
+                    <Viewbox Width="17" Height="17">
+                        <Canvas Width="24" Height="24">
+                            <Path Fill="LightGray" Data="{x:Static icon:Icons.Setting}" />
+                        </Canvas>
+                    </Viewbox>
+                </Button>
+                <Button Background="Transparent"
+                        BorderThickness="0"
+                        ToolTip="Close program">
+                    <Viewbox Width="17" Height="17">
+                        <Canvas Width="24" Height="24">
+                            <Path Fill="LightGray" Data="{x:Static icon:Icons.Cross}" />
+                        </Canvas>
+                    </Viewbox>
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="Click">
+                            <b:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+                                                MethodName="Close" />
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                </Button>
+            </StackPanel>
+            <!--Kills-->
+            <StackPanel Orientation="Horizontal"
+                        ToolTip="{Binding KillsDeathsSummaryText}">
+                <StackPanel.Background>
+                    <SolidColorBrush Color="Black" Opacity="{Binding UiSettings.Opacity, Mode=OneWay}"/>
+                </StackPanel.Background>
+                <TextBlock Text="K"
+                           Margin="2 0 0 0"
+                           Width="12"
+                           Foreground="DarkGray" />
+                <TextBlock Text="{Binding KillsSinceReset}"
+                           Foreground="LightGreen" />
+            </StackPanel>
+            <!--Deaths-->
+            <StackPanel Orientation="Horizontal"
+                        ToolTip="{Binding KillsDeathsSummaryText}">
+                <StackPanel.Background>
+                    <SolidColorBrush Color="Black" Opacity="{Binding UiSettings.Opacity, Mode=OneWay}"/>
+                </StackPanel.Background>
+                <TextBlock Text="D"
+                           Margin="2 0 0 0"
+                           Width="12"
+                           Foreground="DarkGray" />
+                <TextBlock Text="{Binding DeathsSinceReset}"
+                           Foreground="LightCoral" />
+            </StackPanel>
+        </StackPanel>
+    </Viewbox>
+</Window>
