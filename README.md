@@ -1,3 +1,5 @@
+# !!! INFO: This tool will be added as a module to Blish HUD in the future. Thus this stand alone .exe version will not receive any more updates !!!
+
 # Gw2TinyWvwKillCounter
 A tiny tool for the computer game Guild Wars 2. It shows current kills and deaths in a tiny window for the Guild Wars 2 World vs World game mode.
 
