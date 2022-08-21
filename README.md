@@ -1,4 +1,4 @@
-# !!! INFO: This tool will be added as a module to Blish HUD in the future. Thus this stand alone .exe version will not receive any more updates !!!
+# !!! INFO: This tool is now available as a Blish HUD module with the name _Session Tracker_ (https://blishhud.com/).  !!!
 
 # Gw2TinyWvwKillCounter
 A tiny tool for the computer game Guild Wars 2. It shows current kills and deaths in a tiny window for the Guild Wars 2 World vs World game mode.
